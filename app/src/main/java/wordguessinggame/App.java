@@ -6,43 +6,78 @@ package wordguessinggame;
 import java.util.Scanner;
 
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+    public static int player = 1;
 
     public static void main(String[] args) {
-        WordChoser chooser = new WordChoser();
-        Game game = new Game(chooser);
-        Masker masker = new Masker(game);
+        WordChoser chooser1 = new WordChoser();
+        WordChoser chooser2 = new WordChoser();
+        Game game1 = new Game(chooser1);
+        Game game2 = new Game(chooser2);
+        Masker masker1 = new Masker(game1);
+        Masker masker2 = new Masker(game2);
         System.out.println("Welcome! Today the word to guess is: ");
 
         do{
-            System.out.println(masker.getMaskedWord(game));
+            System.out.println("Player 1: " + masker1.getMaskedWord(game1));
+            System.out.println("Player 2: " + masker2.getMaskedWord(game2));
 
-            System.out.println("Enter one letter to guess: ");
+
+            if(player == 1){
+                System.out.println("Player 1: Enter one letter to guess (" +game1.remaining_attempts+" attempts remaining):");
+            }else{
+                System.out.println("Player 2: Enter one letter to guess (" +game2.remaining_attempts+" attempts remaining):");
+            }
             Scanner scanner = new Scanner(System.in);
             
             Character guess = scanner.nextLine().charAt(0);
             guess = Character.toUpperCase(guess);
-            Boolean result = game.guessLetter(guess);
+
+           if(player == 1){
+            Boolean result = game1.guessLetter(guess);
+            player = 2;
             if(result){
-                System.out.print("Correct!");
+                System.out.print("Correct!\n");
                 
             }else{
-                System.out.println("Incorrect...");
+                System.out.println("Incorrect...\n");
             }
-
-            if(game.isGameWon()){
-                System.out.println("You Won!!");
+            if(game1.isGameWon()){
+                System.out.println("Player 1 WINS!!!");
 
                 return;
-            }else if(game.isGameLost()){
-                System.out.println("You Lost Unfortunately");
+            }else if(game1.isGameLost()){
+                System.out.println("Player 1 Lost...");
                 return;
 
             }
+           }else{
+            Boolean result = game2.guessLetter(guess);
+            player = 1;
+            if(result){
+                System.out.print("Correct!\n");
+                
+            }else{
+                System.out.println("Incorrect...\n");
+            }
 
-        }while(game.remaining_attempts >= 1);
+            if(game2.isGameWon()){
+                System.out.println("Player 2 WINS!!!");
+
+                return;
+            }else if(game2.isGameLost()){
+                System.out.println("Player 2 Lost...");
+                return;
+
+            }
+           }
+
+        }while(game1.remaining_attempts >= 1 || game2.remaining_attempts >= 1);
+
+        if(game1.remaining_attempts == 0){
+            System.out.println("Player 1 has run out of remaining attempts, player 2 wins!!");
+        }else{
+            System.out.println("Player 2 has run out of remaining attempts, player 1 wins!!");
+        }
 
     }
 }
